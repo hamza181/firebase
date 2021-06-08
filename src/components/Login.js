@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import firebase from '../firebase/cofig';
 import {
 	Grid,
 	Paper,
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
 	span: {
 		color: 'blue',
-		cursor: 'pointer',
+		cursor: 'pointer'
 	}
 }));
 
@@ -71,10 +72,13 @@ function Login() {
 	const [ email, setEmail ] = useState();
 	const [ password, setPassword ] = useState();
 	const [ hasAccount, setHasAccount ] = useState(false);
+	// var emailValue = React.createRef();	
+	// var passwordValue = React.createRef();	
+
 
 	const handleChange = (prop) => (event) => {
 		setValues({ ...values, [prop]: event.target.value });
-		setPassword(event.target.value);
+		// setPassword(event.target.value);
 	};
 
 	const handleClickShowPassword = () => {
@@ -91,19 +95,68 @@ function Login() {
 		// validation();
 	};
 
-	function validation() {
+	// function validation() {
 		// const mailformat = /\S+@\S+\.\S+/;
-		const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+		// const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
 
+		// setEmail(emailValue.current.value)
+		
 		// if(mailformat.test(email) && strongPassword.test(password)){
-		// 	console.log(email);
-		// 	console.log(password);
+			// console.log(emailValue.current.value);
+			// console.log("password");
 		// 	handleSubmit();
 
 		// }
 		// else{
 		// 	console.log("error");
 		// }
+	// }
+
+	function validateEmail(e){
+
+		// const mailformat = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		const mailformat = /\S+@\S+\.\S+/;
+		if(mailformat.test(e.target.value)){
+
+			setEmail(e.target.value)
+			
+			setTimeout(()=>{
+				console.log(email);
+
+			},5000)
+		}
+	}
+	
+	function handleSignup() {
+		firebase
+		.auth()
+		.createUserWithEmailAndPassword(email, password)
+		.then((userCredential) => {
+				// Signed in
+				var user = userCredential.user;
+				// ...
+			})
+			.catch((error) => {
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				// ..
+			});
+			
+	}
+
+	function handleSignin() {
+		firebase
+			.auth()
+			.signInWithEmailAndPassword(email, password)
+			.then((userCredential) => {
+				// Signed in
+				var user = userCredential.user;
+				
+			})
+			.catch((error) => {
+				var errorCode = error.code;
+				var errorMessage = error.message;
+			});
 	}
 
 	return (
@@ -124,12 +177,7 @@ function Login() {
 								id="outlined-basic"
 								label="Email"
 								variant="outlined"
-								onChange={(e) => {
-									const mailformat = /\S+@\S+\.\S+/;
-
-									if (mailformat.test(e.target.value)) setEmail(e.target.value);
-									console.log(email);
-								}}
+								onChange={validateEmail}
 							/>
 
 							<FormControl
@@ -165,6 +213,7 @@ function Login() {
 											variant="contained"
 											color="primary"
 											type="submit"
+											onClick={handleSignup}
 										>
 											Sign up
 										</Button>
@@ -188,6 +237,7 @@ function Login() {
 											variant="contained"
 											color="primary"
 											type="submit"
+											onClick={handleSignin}
 										>
 											Sign in
 										</Button>
