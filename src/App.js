@@ -1,12 +1,12 @@
 // Topic: Firebase authentication
 // run => npm i firebase firebase-react-hooks
 
-import './App.css';
+import Login from './components/Login';
 
 function App() {
 	return (
 		<div>
-			<h1>Firebase Configuration</h1>
+			<Login />
 		</div>
 	);
 }
