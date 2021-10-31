@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
 import firebase from '../firebase/cofig';
-import {
-	Grid,
-	Paper,
-	makeStyles,
-	TextField,
-	IconButton,
-	InputLabel,
-	OutlinedInput,
-	FormControl,
-	InputAdornment,
-	Button,
-	Avatar
-} from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
 import clsx from 'clsx';
+import { Avatar, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, makeStyles, OutlinedInput, Paper, TextField } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
+import auth from '../firebase/cofig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -128,9 +118,9 @@ function Login() {
 	}
 	
 	function handleSignup() {
-		firebase
-		.auth()
-		.createUserWithEmailAndPassword(email, password)
+		// firebase
+		
+		createUserWithEmailAndPassword(auth, email, password)
 		.then((userCredential) => {
 				// Signed in
 				var user = userCredential.user;
@@ -145,9 +135,7 @@ function Login() {
 	}
 
 	function handleSignin() {
-		firebase
-			.auth()
-			.signInWithEmailAndPassword(email, password)
+			signInWithEmailAndPassword(email, password)
 			.then((userCredential) => {
 				// Signed in
 				var user = userCredential.user;
