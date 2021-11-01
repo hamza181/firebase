@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, set, onValue, get, child } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  get,
+  child,
+  update,
+} from "firebase/database";
 import database from "../firebase/config";
 
 function MyForm() {
@@ -35,7 +43,7 @@ function MyForm() {
 
   //   Read data from firebase
 
-//   read data once 
+  //   read data once
   useEffect(async () => {
     await get(child(ref(database), `users/`))
       .then((snapshot) => {
@@ -52,14 +60,28 @@ function MyForm() {
       });
   }, []);
 
-//   read data when data changes in firebase
+  //   read data when data changes in firebase
   useEffect(() => {
-      onValue(ref(database, "users/"), (snapshot) => {
-        var data = snapshot.val();
-        console.log('Real time data', data);
-        setRealTimeData(data)
-      });
-  }, [])
+    onValue(ref(database, "users/"), (snapshot) => {
+      var data = snapshot.val();
+      console.log("Real time data", data);
+      setRealTimeData(data);
+    });
+  }, []);
+
+  //   update data in firebase
+  async function updateData() {
+    // insert id of which you want to update data
+    var id = 1; // this id should exist in database
+    await update(ref(database, `users/${id}`), {
+      username: "updated name",
+      age: "updated age"
+    })
+      .then(() => {
+        console.log("data updated successfully");
+      })
+      .catch((err) => console.log(err));
+  }
 
   return (
     <div>
@@ -86,7 +108,8 @@ function MyForm() {
           value={myData && myData.myAge}
           onChange={handleChange}
         />
-        <button onClick={addData}>Submit</button>
+        <button onClick={addData}>Add</button>
+        <button onClick={updateData}>Update</button>
       </div>
     </div>
   );
