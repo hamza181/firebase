@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { getDatabase, ref, set, onValue,  } from "firebase/database";
+import React, { useEffect, useState } from "react";
+import { getDatabase, ref, set, onValue, get, child } from "firebase/database";
 import database from "../firebase/config";
 
 function MyForm() {
   const [myData, setMyData] = useState({ myId: "", myName: "", myAge: "" });
+  const [getData, setGetData] = useState();
+  const [realTimeData, setRealTimeData] = useState();
 
   const handleChange = (e) => {
     var { name, value } = e.target;
@@ -12,8 +14,6 @@ function MyForm() {
       ...prev,
       [name]: value,
     }));
-
-    console.log(myData);
   };
 
   // Add data in firebase
@@ -32,6 +32,34 @@ function MyForm() {
     writeUserData(myData.myId, myData.myName, myData.myAge);
   };
   //   Add data in firebase
+
+  //   Read data from firebase
+
+//   read data once 
+  useEffect(async () => {
+    await get(child(ref(database), `users/`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          // store data in state
+          setGetData(snapshot.val());
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+//   read data when data changes in firebase
+  useEffect(() => {
+      onValue(ref(database, "users/"), (snapshot) => {
+        var data = snapshot.val();
+        console.log('Real time data', data);
+        setRealTimeData(data)
+      });
+  }, [])
 
   return (
     <div>
