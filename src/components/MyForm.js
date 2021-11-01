@@ -7,6 +7,8 @@ import {
   get,
   child,
   update,
+  runTransaction,
+  remove,
 } from "firebase/database";
 import database from "../firebase/config";
 
@@ -75,11 +77,18 @@ function MyForm() {
     var id = 1; // this id should exist in database
     await update(ref(database, `users/${id}`), {
       username: "updated name",
-      age: "updated age"
+      age: "updated age",
     })
       .then(() => {
         console.log("data updated successfully");
       })
+      .catch((err) => console.log(err));
+  }
+
+  //   delete data from firebase
+  function deleteData(uid) {
+    remove(ref(database, `/users/${uid}`))
+      .then(console.log("delete data successfully"))
       .catch((err) => console.log(err));
   }
 
@@ -110,6 +119,14 @@ function MyForm() {
         />
         <button onClick={addData}>Add</button>
         <button onClick={updateData}>Update</button>
+        <button
+          onClick={() => {
+            //   pass id here which you want to delete data
+            deleteData("1");
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
