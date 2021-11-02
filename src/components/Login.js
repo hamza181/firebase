@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import firebase from '../firebase/cofig';
-import clsx from 'clsx';
-import { Avatar, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, makeStyles, OutlinedInput, Paper, TextField } from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import Grid from '@mui/material/Grid';
+
+import Paper from '@mui/material/Paper';
+import { makeStyles } from '@mui/styles';
 import auth from '../firebase/cofig';
+// import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
+import { Avatar, Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { padding } from '@mui/system';
+import authentication from '../firebase/cofig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
 
 const useStyles = makeStyles((theme) => ({
@@ -12,17 +18,18 @@ const useStyles = makeStyles((theme) => ({
 	},
 
 	paper: {
-		padding: theme.spacing(2),
+		// padding: theme.spacing(2),
+		padding: '20px',
 		textAlign: 'center',
-		color: theme.palette.text.secondary,
+		color: 'red',
 		height: '500px',
-		margin: '45px 0px'
+		margin: '45px 0px',
 	},
 
 	grid: {
 		justifyContent: 'center',
 		backgroundColor: '#f3f3f3',
-		width: 'auto'
+		width: 'auto',
 	},
 
 	form: {
@@ -31,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 
 	textArea: {
-		marginTop: '40px'
+		marginTop: '40px',
 	},
 
 	loginBtn: {
@@ -116,35 +123,55 @@ function Login() {
 			},5000)
 		}
 	}
+
 	
-	function handleSignup() {
-		// firebase
+	function handleSignup(myemail, pswd) {
+		// firebase method for signup
 		
-		createUserWithEmailAndPassword(auth, email, password)
+		createUserWithEmailAndPassword(authentication, myemail, pswd)
 		.then((userCredential) => {
 				// Signed in
 				var user = userCredential.user;
+				console.log('Sign up successfully');
 				// ...
 			})
 			.catch((error) => {
 				var errorCode = error.code;
 				var errorMessage = error.message;
+				alert(errorCode);
+				console.log('signup error');
 				// ..
 			});
 			
 	}
 
-	function handleSignin() {
-			signInWithEmailAndPassword(email, password)
-			.then((userCredential) => {
-				// Signed in
-				var user = userCredential.user;
-				
-			})
-			.catch((error) => {
-				var errorCode = error.code;
-				var errorMessage = error.message;
-			});
+	function signup(){
+		// this is email and password for signup
+		handleSignup('hamza@gmail.com', 'mypassword12')
+	}
+
+	function handleSignin(myemail, pswd) {
+
+		// firebase method for sign in
+
+		signInWithEmailAndPassword(authentication, myemail, pswd)
+		.then((userCredential) => {
+		  // Signed in 
+		  const user = userCredential.user;
+		  alert('Sign in successfully');
+		  // ...
+		})
+		.catch((error) => {
+		  const errorCode = error.code;
+		  const errorMessage = error.message;
+		  alert(errorMessage);
+		  console.log('Sign in error');
+		});
+	}
+
+	function signin(){
+		// this is email and password for sign in
+		handleSignin('hamza@gmail.com', 'mypassword12')
 	}
 
 	return (
@@ -169,7 +196,7 @@ function Login() {
 							/>
 
 							<FormControl
-								className={clsx(classes.margin, classes.textField, classes.textArea)}
+								className={classes.margin, classes.textField, classes.textArea}
 								variant="outlined"
 							>
 								<InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
@@ -201,7 +228,7 @@ function Login() {
 											variant="contained"
 											color="primary"
 											type="submit"
-											onClick={handleSignup}
+											onClick={signup}
 										>
 											Sign up
 										</Button>
@@ -225,7 +252,7 @@ function Login() {
 											variant="contained"
 											color="primary"
 											type="submit"
-											onClick={handleSignin}
+											onClick={signin}
 										>
 											Sign in
 										</Button>
